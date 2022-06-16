@@ -72,13 +72,13 @@ while (1):
     # Temp function
     process = subprocess.Popen(bashCommand[2].split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
-    print(int(output)/1000, error)
+    temperature = int(output)/1000
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
         {"_id": ObjectId(panels[pi]['_id'])},
         {"$set":
              {'state': status,
-              'temperature': randint(0, 100)},
+              'temperature': temperature},
          }, upsert=True
     )
 
