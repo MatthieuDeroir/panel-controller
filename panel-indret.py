@@ -129,7 +129,9 @@ while (1):
          "index": putPANEL['index'],
          "date": datetime.datetime.utcnow()}
 
-    #postPANEL = panelLogs.insert_one(PANEL).inserted_id
+    if temperature > 70:
+        postPANEL = panelLogs.insert_one(PANEL).inserted_id
+        print("TEMPERATURE : > 70")
 
     print('#################################')
 
