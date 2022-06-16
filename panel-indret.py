@@ -22,7 +22,7 @@ pi = 0
 time_before_update = 1
 
 # config de la numérotation GPIO
-# GPIO.setmode(GPIO.BOARD)
+ GPIO.setmode(GPIO.BOARD)
 
 # index des entrées
 door_1_index = 2
@@ -30,9 +30,9 @@ door_2_index = 3
 power_index = 4
 
 # configuration des broches
-# GPIO.setup(door_1_index, GPIO.IN)
-# GPIO.setup(door_2_index, GPIO.IN)
-# GPIO.setup(power_index, GPIO.IN)
+GPIO.setup(door_1_index, GPIO.IN)
+GPIO.setup(door_2_index, GPIO.IN)
+GPIO.setup(power_index, GPIO.IN)
 
 
 # TODO: replace with host VPN IP adress and Mongodb port when on RP
@@ -117,13 +117,13 @@ while (1):
     # Temp function
     process = subprocess.Popen(bashCommand[2].split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
-    temperature = 0
-    # temperature = int(output)/1000
+    # temperature = 0
+     temperature = int(output)/1000
     # Power measure
-    # GPIO.input(power_index)
+     GPIO.input(power_index)
     # Door measure
-    # GPIO.input(door_2_index)
-    # GPIO.input(door_1_index)
+     GPIO.input(door_2_index)
+     GPIO.input(door_1_index)
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
         {"_id": ObjectId(panels[pi]['_id'])},
