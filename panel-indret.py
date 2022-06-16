@@ -21,12 +21,12 @@ pi = 0
 time_before_update = 10
 
 # config de la numérotation GPIO
-GPIO.setmode(GPIO.BOARD)
+# GPIO.setmode(GPIO.BOARD)
 
 # configuration des broches
-GPIO.setup(1, GPIO.IN)
-GPIO.setup(2, GPIO.IN)
-GPIO.setup(3, GPIO.IN)
+# GPIO.setup(1, GPIO.IN)
+# GPIO.setup(2, GPIO.IN)
+# GPIO.setup(3, GPIO.IN)
 
 # index des entrées
 door_1_index = 1
@@ -86,7 +86,8 @@ while (1):
     # Temp function
     process = subprocess.Popen(bashCommand[2].split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
-    temperature = int(output)/1000
+    temperature = 0
+    #temperature = int(output)/1000
     # Power measure
     #GPIO.input(power_index)
     # Door measure
