@@ -19,7 +19,7 @@ port = 27017
 pi = 0
 
 # change this variable to modify the time between each update
-time_before_update = 10
+time_before_update = 1
 
 # config de la numérotation GPIO
 # GPIO.setmode(GPIO.BOARD)
@@ -44,9 +44,9 @@ print("Python app running\n"
       "Connected to MongoDB\nIP : " + ip + " \nPort : " + str(port))
 
 # init bash command for hdmi control
-# bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto",
-               #"cat /sys/class/thermal/thermal_zone0/temp"]
-bashCommand = ["ls", "ls", "ls"]
+bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto",
+               "cat /sys/class/thermal/thermal_zone0/temp"]
+#bashCommand = ["ls", "ls", "ls"]
 
 # initialisation du PANEL pour post
 PANEL = {"isOpen": False,
@@ -132,7 +132,7 @@ while (1):
     if temperature > 70:
         postPANEL = panelLogs.insert_one(PANEL).inserted_id
         print("TEMPERATURE : > 70")
-    
+
 
     print('#################################')
 
