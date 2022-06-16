@@ -4,6 +4,7 @@ from bson import ObjectId
 from time import sleep
 import datetime
 from random import randint
+import subprocess
 
 ip = 'localhost'
 port = 27017
@@ -22,6 +23,10 @@ oldInstruction = ""
 print("Python app running\n"
       "Connected to MongoDB\nIP : " + ip + " \nPort : " + str(port))
 
+# init bash command for hdmi control
+# bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto"]
+bashCommand = ["ls", "ls"]
+
 while (1):
 
     # database connexion
@@ -36,33 +41,39 @@ while (1):
     panelInst = Instructions(instructions)
 
     # applying instructions
-    # TODO: script to control HDMI port
     if panelInst.table[pi]['instruction'] != panels[pi]['state']:
         if panelInst.table[pi]['instruction']:
             # script on
             print('### ENABLING HDMI PORT ###')
+            process = subprocess.Popen(bashCommand[1].split(), stdout=subprocess.PIPE)
+            output, error = process.communicate()
+            # print(output, error)
+            # updating old status with new instructions
+            status = True
         else:
             # script off
             print('### DISABLING HDMI PORT ###')
+            process = subprocess.Popen(bashCommand[0].split(), stdout=subprocess.PIPE)
+            output, error = process.communicate()
+            # print(output, error)
+            # updating old status with new instructions
+            status = False
+    else:
+        status = panels[pi]['state']
 
-    # updating old status with new instructions
-    newPan = []
-    if panels[pi]['index'] == pi + 1:
-        panels[pi]['state'] = panelInst.table[pi]['instruction']
-        newPan.append(panels[pi])
+    print("PANEL STATUS =", status)
+
 
     # getting panel measures
     # TODO: functions to get measures from panel instruments
     # Temp function
-    newTemp = [0, 0, 0]
-    newTemp[0] = randint(0, 100)
 
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
-        {"_id": ObjectId("62a887b519cacf3ab907126f")},
+        {"_id": ObjectId(panels[pi]['_id'])},
         {"$set":
-             {'state': newPan[0]['state'],
-              'temperature': newTemp[0]},
+             {'state': status,
+              'temperature': randint(0, 100)},
          }, upsert=True
     )
 
@@ -77,8 +88,6 @@ while (1):
              "date": datetime.datetime.utcnow()}
 
     postPANEL = panelLogs.insert_one(PANEL).inserted_id
-
-    postPANEL
 
     # print('#########################')
     #
