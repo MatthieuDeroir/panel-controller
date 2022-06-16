@@ -83,6 +83,13 @@ while (1):
             # updating old status with new instructions
             status = True
             postPANEL = panelLogs.insert_one(PANEL).inserted_id
+            # last log
+            print('#################################')
+            print('Last log :')
+            for key, value in PANEL.items():
+                print('---------------------------------')
+                print(key, ":", value)
+            print('#################################')
         elif not panelInst.table[pi]['instruction']:
             # script off
             print('### HDMI PORT DISABLED ###')
@@ -92,6 +99,13 @@ while (1):
             # updating old status with new instructions
             status = False
             postPANEL = panelLogs.insert_one(PANEL).inserted_id
+            # last log
+            print('#################################')
+            print('Last log :')
+            for key, value in PANEL.items():
+                print('---------------------------------')
+                print(key, ":", value)
+            print('#################################')
     else:
         status = panels[pi]['state']
 
@@ -132,17 +146,5 @@ while (1):
     if temperature > 70:
         postPANEL = panelLogs.insert_one(PANEL).inserted_id
         print("TEMPERATURE : > 70")
-
-
-    print('#################################')
-
-    print('Last log :')
-
-    for key, value in PANEL.items():
-        print('---------------------------------')
-        print(key, ":", value)
-
-    print('#################################')
-
     # wait time before update
     sleep(time_before_update)
