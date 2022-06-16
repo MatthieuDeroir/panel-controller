@@ -5,6 +5,7 @@ from time import sleep
 import datetime
 from random import randint
 import subprocess
+#import RPi.GPIO as GPIO
 
 
 user = 'root'
@@ -19,6 +20,19 @@ pi = 0
 # change this variable to modify the time between each update
 time_before_update = 10
 
+# config de la numérotation GPIO
+GPIO.setmode(GPIO.BOARD)
+
+# configuration des broches
+GPIO.setup(1, GPIO.IN)
+GPIO.setup(2, GPIO.IN)
+GPIO.setup(3, GPIO.IN)
+
+# index des entrées
+door_1_index = 1
+door_2_index = 2
+power_index = 3
+
 # TODO: replace with host VPN IP adress and Mongodb port when on RP
 client = MongoClient(add)
 
@@ -29,7 +43,7 @@ print("Python app running\n"
 
 # init bash command for hdmi control
 bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto", "cat /sys/class/thermal/thermal_zone0/temp"]
-# bashCommand = ["ls", "ls", "cat /sys/class/thermal/thermal_zone0/temp"]
+# bashCommand = ["ls", "ls", "ls"]
 
 while (1):
 
@@ -61,7 +75,7 @@ while (1):
             print('### HDMI PORT DISABLED ###')
             process = subprocess.Popen(bashCommand[0].split(), stdout=subprocess.PIPE)
             output, error = process.communicate()
-            print(output, error)
+            # print(output, error)
             # updating old status with new instructions
             status = False
 
@@ -73,6 +87,11 @@ while (1):
     process = subprocess.Popen(bashCommand[2].split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     temperature = int(output)/1000
+    # Power measure
+    #GPIO.input(power_index)
+    # Door measure
+    #GPIO.input(door_2_index)
+    #GPIO.input(door_1_index)
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
         {"_id": ObjectId(panels[pi]['_id'])},
