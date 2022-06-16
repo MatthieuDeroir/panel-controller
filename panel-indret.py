@@ -16,7 +16,7 @@ add = 'mongodb://192.167.100.105:27017/'
 port = 27017
 
 # panel index
-pi = 1
+pi = 0
 
 # change this variable to modify the time between each update
 time_before_update = 10
@@ -132,6 +132,7 @@ while (1):
     if temperature > 70:
         postPANEL = panelLogs.insert_one(PANEL).inserted_id
         print("TEMPERATURE : > 70")
+    
 
     print('#################################')
 

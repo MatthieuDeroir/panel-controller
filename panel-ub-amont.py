@@ -16,7 +16,7 @@ add = 'mongodb://192.167.100.105:27017/'
 port = 27017
 
 # panel index
-pi = 1
+pi = 2
 
 # change this variable to modify the time between each update
 time_before_update = 10
