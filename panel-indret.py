@@ -120,7 +120,7 @@ while (1):
         {"$set":
              {'state': status,
               'temperature': temperature,
-              'isOpen': door_1 or door_2,
+              'isOpen': door_1 and door_2,
               'screen': power},
          }, upsert=True
     )
