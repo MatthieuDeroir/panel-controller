@@ -7,11 +7,16 @@ GPIO.setmode(GPIO.BCM)
 door_1_index = 2
 door_2_index = 3
 power_index = 4
+led_1_index = 17
+led_2_index = 27
 
 # setting up GPIOs as Inputs
 GPIO.setup(door_1_index, GPIO.IN)
 GPIO.setup(door_2_index, GPIO.IN)
 GPIO.setup(power_index, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(led_1_index, GPIO.OUT)
+GPIO.setup(led_2_index, GPIO.OUT)
+
 
 # storing results
 def update_input():
@@ -19,6 +24,18 @@ def update_input():
     door_2 = GPIO.input(door_2_index)
     power = GPIO.input(power_index)
     return door_1, door_2, power
+
+def change_output(state):
+    if state:
+        led_1 = GPIO.output(led_1_index, GPIO.HIGH)
+        led_2 = GPIO.output(led_2_index, GPIO.HIGH)
+        print("LED 1 :", led_1)
+        print("LED 2 :", led_2)
+    else:
+        led_1 = GPIO.output(led_1_index, GPIO.LOW)
+        led_2 = GPIO.output(led_2_index, GPIO.LOW)
+        print("LED 1 :", led_1)
+        print("LED 2 :", led_2)
 
 # printing results
 # print("Door 1 :", door_1)

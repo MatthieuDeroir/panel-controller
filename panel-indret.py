@@ -71,6 +71,8 @@ while (1):
             # updating old status with new instructions
             status = True
             postPANEL = panelLogs.insert_one(PANEL).inserted_id
+            # changing LED states
+            gpio.change_output(status)
             # last log
             print('#################################')
             print('Last log :')
@@ -87,6 +89,8 @@ while (1):
             # updating old status with new instructions
             status = False
             postPANEL = panelLogs.insert_one(PANEL).inserted_id
+            # changing LED states
+            gpio.change_output(status)
             # last log
             print('#################################')
             print('Last log :')
