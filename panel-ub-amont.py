@@ -22,17 +22,19 @@ pi = 2
 time_before_update = 10
 
 # config de la numérotation GPIO
-# GPIO.setmode(GPIO.BOARD)
+# GPIO.setmode(GPIO.BCM)
 
 # index des entrées
 door_1_index = 2
 door_2_index = 3
 power_index = 4
 
+GPIO = ''
+
 # configuration des broches
-# GPIO.setup(door_1_index, GPIO.IN)
-# GPIO.setup(door_2_index, GPIO.IN)
-# GPIO.setup(power_index, GPIO.IN)
+GPIO.setup(door_1_index, GPIO.IN)
+GPIO.setup(door_2_index, GPIO.IN)
+GPIO.setup(power_index, GPIO.IN)
 
 
 # TODO: replace with host VPN IP adress and Mongodb port when on RP
@@ -44,8 +46,7 @@ print("Python app running\n"
       "Connected to MongoDB\nIP : " + ip + " \nPort : " + str(port))
 
 # init bash command for hdmi control
-# bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto",
-               #"cat /sys/class/thermal/thermal_zone0/temp"]
+ bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto", "cat /sys/class/thermal/thermal_zone0/temp"]
 bashCommand = ["ls", "ls", "ls"]
 
 # initialisation du PANEL pour post
@@ -103,19 +104,23 @@ while (1):
     # Temp function
     process = subprocess.Popen(bashCommand[2].split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
+    temperature = int(output)/1000
+
     temperature = 0
-    # temperature = int(output)/1000
     # Power measure
-    # GPIO.input(power_index)
+    power = GPIO.input(power_index)
     # Door measure
-    # GPIO.input(door_2_index)
-    # GPIO.input(door_1_index)
+    door_2 = GPIO.input(door_2_index)
+    door_1 = GPIO.input(door_1_index)
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
         {"_id": ObjectId(panels[pi]['_id'])},
         {"$set":
              {'state': status,
-              'temperature': temperature},
+              'temperature': temperature,
+              'power': power,
+              'isOpen': door_1 and door_2
+              }
          }, upsert=True
     )
 

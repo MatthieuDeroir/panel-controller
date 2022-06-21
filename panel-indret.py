@@ -5,8 +5,9 @@ from time import sleep
 import datetime
 from random import randint
 import subprocess
-
-# import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
+import gpio
+import config
 
 
 user = 'root'
@@ -20,19 +21,6 @@ pi = 0
 
 # change this variable to modify the time between each update
 time_before_update = 1
-
-# config de la numérotation GPIO
- GPIO.setmode(GPIO.BOARD)
-
-# index des entrées
-door_1_index = 2
-door_2_index = 3
-power_index = 4
-
-# configuration des broches
-GPIO.setup(door_1_index, GPIO.IN)
-GPIO.setup(door_2_index, GPIO.IN)
-GPIO.setup(power_index, GPIO.IN)
 
 
 # TODO: replace with host VPN IP adress and Mongodb port when on RP
@@ -118,18 +106,20 @@ while (1):
     process = subprocess.Popen(bashCommand[2].split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
     # temperature = 0
-     temperature = int(output)/1000
-    # Power measure
-     GPIO.input(power_index)
-    # Door measure
-     GPIO.input(door_2_index)
-     GPIO.input(door_1_index)
+    temperature = int(output)/1000
+    # printing results
+    print("Door 1 :", gpio.door_1)
+    print("Door 2 :", gpio.door_2)
+    print(gpio.door_1 and gpio.door_2)
+    print("Power :", gpio.power)
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
         {"_id": ObjectId(panels[pi]['_id'])},
         {"$set":
              {'state': status,
-              'temperature': temperature},
+              'temperature': temperature,
+              'isOpen': gpio.door_1 and gpio.door_2,
+              'screen': gpio.power},
          }, upsert=True
     )
 
