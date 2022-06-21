@@ -5,8 +5,9 @@ from time import sleep
 import datetime
 from random import randint
 import subprocess
-
-# import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
+import gpio
+import config
 
 
 user = 'root'
@@ -19,20 +20,7 @@ port = 27017
 pi = 1
 
 # change this variable to modify the time between each update
-time_before_update = 10
-
-# config de la numérotation GPIO
-# GPIO.setmode(GPIO.BOARD)
-
-# index des entrées
-door_1_index = 2
-door_2_index = 3
-power_index = 4
-
-# configuration des broches
-# GPIO.setup(door_1_index, GPIO.IN)
-# GPIO.setup(door_2_index, GPIO.IN)
-# GPIO.setup(power_index, GPIO.IN)
+time_before_update = 1
 
 
 # TODO: replace with host VPN IP adress and Mongodb port when on RP
@@ -44,9 +32,9 @@ print("Python app running\n"
       "Connected to MongoDB\nIP : " + ip + " \nPort : " + str(port))
 
 # init bash command for hdmi control
-# bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto",
-               #"cat /sys/class/thermal/thermal_zone0/temp"]
-bashCommand = ["ls", "ls", "ls"]
+bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto",
+               "cat /sys/class/thermal/thermal_zone0/temp"]
+#bashCommand = ["ls", "ls", "ls"]
 
 # initialisation du PANEL pour post
 PANEL = {"isOpen": False,
@@ -83,7 +71,9 @@ while (1):
             # updating old status with new instructions
             status = True
             postPANEL = panelLogs.insert_one(PANEL).inserted_id
-            # last log info
+            # changing LED states
+            gpio.change_output(status)
+            # last log
             print('#################################')
             print('Last log :')
             for key, value in PANEL.items():
@@ -99,7 +89,9 @@ while (1):
             # updating old status with new instructions
             status = False
             postPANEL = panelLogs.insert_one(PANEL).inserted_id
-            # last log info
+            # changing LED states
+            gpio.change_output(status)
+            # last log
             print('#################################')
             print('Last log :')
             for key, value in PANEL.items():
@@ -117,19 +109,31 @@ while (1):
     # Temp function
     process = subprocess.Popen(bashCommand[2].split(), stdout=subprocess.PIPE)
     output, error = process.communicate()
-    temperature = 0
-    # temperature = int(output)/1000
-    # Power measure
-    # GPIO.input(power_index)
-    # Door measure
-    # GPIO.input(door_2_index)
-    # GPIO.input(door_1_index)
+    # temperature = 0
+    temperature = int(output)/1000
+
+    door_1, door_2, power = gpio.update_input()
+    # printing results
+    print("Door 1 :", door_1)
+    print("Door 2 :", door_2)
+    print("Les portes sont fermées" if door_1 and door_2 else "Au moins une porte est ouverte")
+    print("Power :", power)
+
+    # checking if anything goes wrong
+    if not(door_1 or door_2 or power or not(temperature >= 80)):
+        bug = True
+    else:
+        bug = False
+
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
         {"_id": ObjectId(panels[pi]['_id'])},
         {"$set":
              {'state': status,
-              'temperature': temperature},
+              'temperature': temperature,
+              'isOpen': not(door_1 and door_2),
+              'screen': power,
+              'bug': bug},
          }, upsert=True
     )
 
@@ -143,11 +147,8 @@ while (1):
          "index": putPANEL['index'],
          "date": datetime.datetime.utcnow()}
 
-    if temperature > 70:
+    if temperature > 80:
         postPANEL = panelLogs.insert_one(PANEL).inserted_id
         print("TEMPERATURE : > 70")
-
-
-
     # wait time before update
     sleep(time_before_update)

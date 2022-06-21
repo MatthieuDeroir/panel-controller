@@ -116,7 +116,7 @@ while (1):
     # printing results
     print("Door 1 :", door_1)
     print("Door 2 :", door_2)
-    print(door_1 and door_2)
+    print("Les portes sont fermées" if door_1 and door_2 else "Au moins une porte est ouverte")
     print("Power :", power)
 
     # checking if anything goes wrong
