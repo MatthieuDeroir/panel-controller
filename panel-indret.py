@@ -120,7 +120,7 @@ while (1):
     print("Power :", power)
 
     # checking if anything goes wrong
-    if not(door_1 or door_2 or power or not(temperature >= 80)):
+    if not(door_1 and door_2) or not(power) or (temperature >= 80):
         bug = True
     else:
         bug = False
