@@ -54,13 +54,15 @@ while (1):
     ping = subprocess.Popen(bashCommand[3].split(), stdout=subprocess.PIPE)
 
     if not ping:
-        print('### HDMI PORT DISABLED ###')
+        print('### DISCONNECTED FROM SERVER ###')
+        print('### DISABLING HDMI ###')
         # process = subprocess.Popen(bashCommand[0].split(), stdout=subprocess.PIPE)
         # output, error = process.communicate()
         hasBeenDisconnected = True
 
     if ping and hasBeenDisconnected:
-        print('### HDMI PORT ENABLED ###')
+        print('### RECONNECTED TO SERVER ###')
+        print('### ENABLING HDMI ###')
         # process = subprocess.Popen(bashCommand[1].split(), stdout=subprocess.PIPE)
         # output, error = process.communicate()
         hasBeenDisconnected = False
