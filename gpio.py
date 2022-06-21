@@ -14,8 +14,8 @@ led_2_index = 27
 GPIO.setup(door_1_index, GPIO.IN)
 GPIO.setup(door_2_index, GPIO.IN)
 GPIO.setup(power_index, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(led_1_index, GPIO.OUT)
-GPIO.setup(led_2_index, GPIO.OUT)
+GPIO.setup(led_1_index, GPIO.OUT, initial=GPIO.LOW)
+GPIO.setup(led_2_index, GPIO.OUT, initial=GPIO.LOW)
 
 
 # storing results
