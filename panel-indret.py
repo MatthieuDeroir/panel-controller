@@ -124,7 +124,7 @@ while (1):
         bug = True
     else:
         bug = False
-
+    print("Bug :", bug)
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
         {"_id": ObjectId(panels[pi]['_id'])},
