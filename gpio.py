@@ -14,9 +14,12 @@ GPIO.setup(door_2_index, GPIO.IN)
 GPIO.setup(power_index, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 # storing results
-door_1 = GPIO.input(door_1_index)
-door_2 = GPIO.input(door_2_index)
-power = GPIO.input(power_index)
+def update_input():
+    door_1 = GPIO.input(door_1_index)
+    door_2 = GPIO.input(door_2_index)
+    power = GPIO.input(power_index)
+    return door_1, door_2, power
+
 # printing results
 # print("Door 1 :", door_1)
 # print("Door 2 :", door_2)

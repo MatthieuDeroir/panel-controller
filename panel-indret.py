@@ -107,18 +107,20 @@ while (1):
     output, error = process.communicate()
     # temperature = 0
     temperature = int(output)/1000
+
+    door_1, door_2, power = gpio.update_input()
     # printing results
-    print("Door 1 :", gpio.door_1)
-    print("Door 2 :", gpio.door_2)
-    print(gpio.door_1 and gpio.door_2)
-    print("Power :", gpio.power)
+    print("Door 1 :", door_1)
+    print("Door 2 :", door_2)
+    print(door_1 and door_2)
+    print("Power :", power)
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
         {"_id": ObjectId(panels[pi]['_id'])},
         {"$set":
              {'state': status,
               'temperature': temperature,
-              'isOpen': gpio.door_1 and gpio.door_2,
+              'isOpen': gpio.door_1 or gpio.door_2,
               'screen': gpio.power},
          }, upsert=True
     )
