@@ -114,6 +114,13 @@ while (1):
     print("Door 2 :", door_2)
     print(door_1 and door_2)
     print("Power :", power)
+
+    # checking if anything goes wrong
+    if not(door_1 or door_2 or power or not(temperature >= 80)):
+        bug = True
+    else:
+        bug = False
+
     # put request to panel state
     putPANEL = db["panels"].find_one_and_update(
         {"_id": ObjectId(panels[pi]['_id'])},
@@ -121,7 +128,8 @@ while (1):
              {'state': status,
               'temperature': temperature,
               'isOpen': not(door_1 and door_2),
-              'screen': power},
+              'screen': power,
+              'bug': bug},
          }, upsert=True
     )
 
