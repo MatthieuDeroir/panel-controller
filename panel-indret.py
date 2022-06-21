@@ -33,7 +33,7 @@ print("Python app running\n"
 
 # init bash command for hdmi control
 bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto",
-               "cat /sys/class/thermal/thermal_zone0/temp"]
+               "cat /sys/class/thermal/thermal_zone0/temp", "ping 192.167.100.105"]
 #bashCommand = ["ls", "ls", "ls"]
 
 # initialisation du PANEL pour post
@@ -46,7 +46,25 @@ PANEL = {"isOpen": False,
          "index": 0,
          "date": datetime.datetime.utcnow()}
 
+hasBeenDisconnected = False
+
 while (1):
+
+    # to handle disconnection with server
+    ping = subprocess.Popen(bashCommand[3].split(), stdout=subprocess.PIPE)
+
+    if not ping:
+        print('### HDMI PORT DISABLED ###')
+        # process = subprocess.Popen(bashCommand[0].split(), stdout=subprocess.PIPE)
+        # output, error = process.communicate()
+        hasBeenDisconnected = True
+
+    if ping and hasBeenDisconnected:
+        print('### HDMI PORT ENABLED ###')
+        # process = subprocess.Popen(bashCommand[1].split(), stdout=subprocess.PIPE)
+        # output, error = process.communicate()
+        hasBeenDisconnected = False
+
 
     # database connexion
     db = client.portNS
