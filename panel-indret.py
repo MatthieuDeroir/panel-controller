@@ -8,6 +8,8 @@ import subprocess
 #import RPi.GPIO as GPIO
 import gpio
 import config
+from ping3 import ping
+
 
 
 user = 'root'
@@ -33,7 +35,7 @@ print("Python app running\n"
 
 # init bash command for hdmi control
 bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto",
-               "cat /sys/class/thermal/thermal_zone0/temp", "ping 192.167.100.105"]
+               "cat /sys/class/thermal/thermal_zone0/temp"]
 #bashCommand = ["ls", "ls", "ls"]
 
 # initialisation du PANEL pour post
@@ -51,22 +53,21 @@ hasBeenDisconnected = False
 while (1):
 
     # to handle disconnection with server
-    ping = subprocess.Popen(bashCommand[3].split(), stdout=subprocess.PIPE)
 
-    if not ping:
+    resp = ping("192.167.100.105")
+
+    if not resp:
         print('### DISCONNECTED FROM SERVER ###')
         print('### DISABLING HDMI ###')
         # process = subprocess.Popen(bashCommand[0].split(), stdout=subprocess.PIPE)
         # output, error = process.communicate()
         hasBeenDisconnected = True
-
-    if ping and hasBeenDisconnected:
+    else:
         print('### RECONNECTED TO SERVER ###')
         print('### ENABLING HDMI ###')
         # process = subprocess.Popen(bashCommand[1].split(), stdout=subprocess.PIPE)
         # output, error = process.communicate()
         hasBeenDisconnected = False
-
 
     # database connexion
     db = client.portNS
