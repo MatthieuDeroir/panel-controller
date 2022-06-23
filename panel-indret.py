@@ -56,7 +56,7 @@ while (1):
 
     resp = ping("192.167.100.105")
 
-    if not resp:
+    if resp:
         print('### DISCONNECTED FROM SERVER ###')
         print('### DISABLING HDMI ###')
         # process = subprocess.Popen(bashCommand[0].split(), stdout=subprocess.PIPE)
