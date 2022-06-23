@@ -38,6 +38,7 @@ def change_output(state):
         print("LED 2 :", led_2, state_2)
     else:
         led_1 = GPIO.output(led_1_index, GPIO.HIGH)
+        sleep(1)
         led_2 = GPIO.output(led_2_index, GPIO.HIGH)
         state_1 = GPIO.gpio_function(led_1_index)
         state_2 = GPIO.gpio_function(led_2_index)
