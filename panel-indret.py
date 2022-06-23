@@ -59,6 +59,7 @@ while (1):
     # to handle disconnection with server
 
     resp = ping("192.167.100.105")
+    print(resp)
 
     if resp and not hasBeenDisconnected:
         print('### DISCONNECTED FROM SERVER ###')
