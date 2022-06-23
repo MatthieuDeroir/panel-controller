@@ -8,7 +8,7 @@ import subprocess
 #import RPi.GPIO as GPIO
 import gpio
 import config
-from ping3 import ping
+from ping import ping
 
 
 
