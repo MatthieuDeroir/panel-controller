@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
-# setting up GPIO couting standard as BCM
+# setting up GPIO counting standard as BCM
 GPIO.setmode(GPIO.BCM)
 
 # GPIO's indexes
@@ -26,6 +26,7 @@ def update_input():
     power = GPIO.input(power_index)
     return door_1, door_2, power
 
+
 def change_output(state):
     if state:
         led_1 = GPIO.output(led_1_index, GPIO.LOW)
@@ -45,8 +46,3 @@ def change_output(state):
         print("ETEIGNAGE")
         print("LED 1 :", led_1, state_1)
         print("LED 2 :", led_2, state_2)
-
-# printing results
-# print("Door 1 :", door_1)
-# print("Door 2 :", door_2)
-# print("Power :", power)
