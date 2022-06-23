@@ -28,6 +28,10 @@ time_before_update = 1
 # TODO: replace with host VPN IP adress and Mongodb port when on RP
 client = MongoClient(add)
 
+# database connexion
+db = client.portNS
+# db.authentificate = (user, password)
+
 oldInstruction = ""
 
 print("Python app running\n"
@@ -42,7 +46,7 @@ bashCommand = ["xrandr --output HDMI-1 --off", "xrandr --output HDMI-1 --auto",
 PANEL = {"isOpen": False,
          "name": "Init",
          "screen": True,
-         "power": True,
+         "online": True,
          "state": True,
          "temperature": 0,
          "index": 0,
@@ -56,22 +60,20 @@ while (1):
 
     resp = ping("192.167.100.105")
 
-    if resp:
+    if resp and not hasBeenDisconnected:
         print('### DISCONNECTED FROM SERVER ###')
         print('### DISABLING HDMI ###')
         # process = subprocess.Popen(bashCommand[0].split(), stdout=subprocess.PIPE)
         # output, error = process.communicate()
         hasBeenDisconnected = True
-    else:
+    elif not resp and hasBeenDisconnected:
         print('### RECONNECTED TO SERVER ###')
         print('### ENABLING HDMI ###')
         # process = subprocess.Popen(bashCommand[1].split(), stdout=subprocess.PIPE)
         # output, error = process.communicate()
         hasBeenDisconnected = False
 
-    # database connexion
-    db = client.portNS
-    # db.authentificate = (user, password)
+
 
     # collection fetching
     panelLogs = db.panellogs
@@ -133,15 +135,15 @@ while (1):
     # temperature = 0
     temperature = int(output)/1000
 
-    door_1, door_2, power = gpio.update_input()
+    door_1, door_2, online = gpio.update_input()
     # printing results
     print("Door 1 :", door_1)
     print("Door 2 :", door_2)
     print("Les portes sont fermées" if door_1 and door_2 else "Au moins une porte est ouverte")
-    print("Power :", power)
+    print("Power :", online)
 
     # checking if anything goes wrong
-    if not(door_1 and door_2) or not(power) or (temperature >= 80):
+    if not(door_1 and door_2) or not(online) or (temperature >= 80):
         bug = True
     else:
         bug = False
@@ -152,17 +154,19 @@ while (1):
         {"$set":
              {'state': status,
               'temperature': temperature,
-              'isOpen': not(door_1 and door_2),
-              'screen': power,
+              'door_1': not door_1,
+              'door_2': not door_2,
+              'screen': online,
               'bug': bug},
          }, upsert=True
     )
 
     # pushing instructions into logs
-    PANEL = {"isOpen": putPANEL['isOpen'],
+    PANEL = {"door_1": putPANEL['door_1'],
+         "door_2": putPANEL['door_2'],
          "name": putPANEL['name'],
          "screen": putPANEL['screen'],
-         "power": putPANEL['power'],
+         "online": putPANEL['online'],
          "state": putPANEL['state'],
          "temperature": putPANEL['temperature'],
          "index": putPANEL['index'],
