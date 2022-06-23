@@ -29,12 +29,13 @@ def update_input():
 def change_output(state):
     if state:
         led_1 = GPIO.output(led_1_index, GPIO.LOW)
+        sleep(1)
         led_2 = GPIO.output(led_2_index, GPIO.LOW)
         state_1 = GPIO.gpio_function(led_1_index)
         state_2 = GPIO.gpio_function(led_2_index)
         print("ALLUMAGE")
         print("LED 1 :", led_1, state_1)
-        sleep(1)
+
         print("LED 2 :", led_2, state_2)
     else:
         led_1 = GPIO.output(led_1_index, GPIO.HIGH)
